@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:slack_bundle/model/ScheduledMessage.dart';
 
-import '../service/SlackService.dart';
+import '../service/SendMessageService.dart';
 import '../util/Preferences.dart';
 
 class ScheduleMessageListStatefulWidget extends StatefulWidget {
@@ -23,7 +23,7 @@ class _ScheduleMessageListStatefulWidgetState
     super.initState();
     Preferences.getChannel().then((channel) {
       _channel = channel;
-      SlackService().callScheduledMessagesList(_channel).then((value) {
+      SendMessageService().callScheduledMessagesList(_channel).then((value) {
         setState(() {
           if (value == null) return;
           messages = value.scheduledMessages;
@@ -86,7 +86,7 @@ class _ScheduleMessageListStatefulWidgetState
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context, "Ok");
-                  SlackService()
+                  SendMessageService()
                       .callDeleteScheduledMessagesList(
                           messages[index].channelId, messages[index].id)
                       .then((value) {

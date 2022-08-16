@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:slack_bundle/util/Preferences.dart';
 
-import '../service/SlackService.dart';
+import '../service/SendMessageService.dart';
 import '../util/Util.dart';
 
 class ScheduleMessageStatefulWidget extends StatefulWidget {
@@ -148,7 +148,7 @@ class _ScheduleMessageStatefulWidgetState
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context, "OK");
-                    SlackService()
+                    SendMessageService()
                         .callScheduleMessage(_channel, _reservationTime, _msg)
                         .then((value) {
                       if (value) _controller.text = "";

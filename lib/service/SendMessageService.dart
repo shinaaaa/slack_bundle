@@ -4,7 +4,7 @@ import '../model/Conversations.dart';
 import '../model/ScheduledMessage.dart';
 import '../util/Preferences.dart';
 
-class SlackService {
+class SendMessageService {
   Future<bool> callPostMessage(String channel, String text) async {
     String token = await Preferences.getToken();
 
@@ -71,17 +71,6 @@ class SlackService {
     if (response.statusCode != 200) return false;
     Slack result = Slack.fromJson(response.data);
     return result.ok;
-  }
-
-  Future<List<Channels>> callConversationsList() async {
-    String token = await Preferences.getToken();
-    final response = await Dio().get('https://slack.com/api/conversations.list',
-        options: Options(headers: {
-          "authorization": "Bearer $token",
-        }));
-    if (response.statusCode != 200) return [];
-    Conversations conversations = Conversations.fromJson(response.data);
-    return conversations.channels;
   }
 
 // void callFilesUpload() async {

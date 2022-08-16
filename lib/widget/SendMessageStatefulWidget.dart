@@ -1,8 +1,9 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:slack_bundle/service/ConversationService.dart';
 
 import '../model/Conversations.dart';
-import '../service/SlackService.dart';
+import '../service/SendMessageService.dart';
 
 class SendMessageStatefulWidget extends StatefulWidget {
   const SendMessageStatefulWidget({Key? key}) : super(key: key);
@@ -34,7 +35,8 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
   }
 
   void createDropdownItems() async {
-    List<Channels> channels = await SlackService().callConversationsList();
+    List<Channels> channels =
+        await ConversationService().callConversationsList();
     channels.sort((a, b) => a.name.compareTo(b.name));
     setState(() {
       dropdownItems = channels.map((channel) {
@@ -125,7 +127,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                 onPressed: () {
                   if (_filePath.isEmpty) {
                     if (!_formKey.currentState!.validate()) return;
-                    SlackService()
+                    SendMessageService()
                         .callPostMessage(_channel, _msg)
                         .then((value) {
                       if (value) _controller.text = "";
@@ -133,7 +135,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                     });
                     return;
                   }
-                  SlackService()
+                  SendMessageService()
                       .callFileUpload(_channel, _msg, _filePath)
                       .then((value) {
                     showSendMessageResultSnackBar(context, value);
