@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:slack_bundle/model/AuthTest.dart';
+import 'package:slack_bundle/service/AuthTestService.dart';
 
 import '../util/Preferences.dart';
 
@@ -10,23 +12,19 @@ class SettingStatefulWidget extends StatefulWidget {
 }
 
 class _SettingStatefulWidgetState extends State<SettingStatefulWidget> {
+  final _formKey = GlobalKey<FormState>();
   late TextEditingController _tokenController;
-  late TextEditingController _channelController;
+  AuthTest _auth = AuthTest(ok: false, team: "", url: "");
   String _token = "";
-  String _channel = "";
+  bool _onClick = false;
 
   @override
   void initState() {
     super.initState();
     _tokenController = TextEditingController();
-    _channelController = TextEditingController();
     Preferences.getToken().then((value) {
       _token = value;
       _tokenController.text = value;
-    });
-    Preferences.getChannel().then((value) {
-      _channel = value;
-      _channelController.text = value;
     });
   }
 
@@ -39,66 +37,69 @@ class _SettingStatefulWidgetState extends State<SettingStatefulWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("Channel : "),
-          SizedBox(
-            width: 300,
-            child: TextField(
-              controller: _channelController,
-              onChanged: (text) {
-                setState(() {
-                  _channel = text;
-                });
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton.icon(
-              onPressed: () {
-                setState(() {
-                  Preferences.setChannel(_channel).then((value) {
-                    showSaveSnackBar(context, value);
-                  });
-                });
-              },
-              icon: const Icon(Icons.save),
-              label: const Text("저장"))
-        ],
+        body: Column(children: [
+      const SizedBox(
+        height: 100,
       ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("Token : "),
-          SizedBox(
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Text("Token : "),
+        SizedBox(
             width: 300,
-            child: TextField(
-              decoration: const InputDecoration(prefixText: "Bearer "),
-              controller: _tokenController,
-              obscureText: false,
-              onChanged: (text) {
+            child: Form(
+                key: _formKey,
+                child: TextFormField(
+                    decoration: const InputDecoration(prefixText: "Bearer "),
+                    controller: _tokenController,
+                    obscureText: false,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                    onChanged: (text) {
+                      setState(() {
+                        _token = text;
+                        _onClick = false;
+                      });
+                    }))),
+        const SizedBox(width: 10),
+        ElevatedButton.icon(
+            onPressed: () {
+              if (!_formKey.currentState!.validate()) return;
+              AuthTestService().authTest(_token).then((value) {
                 setState(() {
-                  _token = text;
+                  _onClick = true;
+                  _auth = value;
                 });
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton.icon(
-              onPressed: () {
-                setState(() {
-                  Preferences.setToken(_token).then((value) {
-                    showSaveSnackBar(context, value);
-                  });
-                });
-              },
-              icon: const Icon(Icons.save),
-              label: const Text("저장"))
-        ],
-      )
+              });
+            },
+            icon: const Icon(Icons.check),
+            label: const Text("검사"))
+      ]),
+      const SizedBox(
+        height: 20,
+      ),
+      SizedBox(
+        width: 470,
+        child: _checkTestResult(),
+      ),
+      const SizedBox(
+        height: 100,
+      ),
+      ElevatedButton.icon(
+          style: const ButtonStyle(visualDensity: VisualDensity(horizontal: 4)),
+          onPressed: () {
+            if (!_auth.ok) {
+              showSaveSnackBar(context, _auth.ok);
+              return;
+            }
+            Preferences.setToken(_token).then((value) {
+              showSaveSnackBar(context, value);
+            });
+          },
+          icon: const Icon(Icons.save),
+          label: const Text("저장"))
     ]));
   }
 
@@ -106,5 +107,31 @@ class _SettingStatefulWidgetState extends State<SettingStatefulWidget> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(value ? "저장 성공" : "저장실패"),
         backgroundColor: value ? Colors.blueAccent : Colors.redAccent));
+  }
+
+  Card _checkTestResult() {
+    if (!_onClick) {
+      return const Card(
+        child: ListTile(
+          title: Text('토큰 검증'),
+        ),
+      );
+    }
+    if (_auth.ok) {
+      return Card(
+        child: ListTile(
+          leading: const Icon(Icons.check_circle_outline, color: Colors.green),
+          title: const Text('검증 성공'),
+          subtitle: Text("Workspace : ${_auth.team}\nURL : ${_auth.url}"),
+        ),
+      );
+    }
+
+    return const Card(
+      child: ListTile(
+        leading: Icon(Icons.cancel_outlined, color: Colors.red),
+        title: Text('검증 실패'),
+      ),
+    );
   }
 }
