@@ -63,9 +63,17 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     });
   }
 
+  static const List<String> _selectedTitle = <String>[
+    "메시지 발송",
+    "예약 메시지",
+    "예약 목록",
+    "설정",
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(title: Text(_selectedTitle.elementAt(_selectedIndex))),
         body: _widgetOptions.elementAt(_selectedIndex),
         bottomNavigationBar: BottomNavigationBar(
           elevation: 1,

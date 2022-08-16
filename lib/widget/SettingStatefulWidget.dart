@@ -39,68 +39,67 @@ class _SettingStatefulWidgetState extends State<SettingStatefulWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('설정')),
         body:
             Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Channel : "),
-              SizedBox(
-                width: 300,
-                child: TextField(
-                  controller: _channelController,
-                  onChanged: (text) {
-                    setState(() {
-                      _channel = text;
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(width: 10),
-              ElevatedButton.icon(
-                  onPressed: () {
-                    setState(() {
-                      Preferences.setChannel(_channel).then((value) {
-                        showSaveSnackBar(context, value);
-                      });
-                    });
-                  },
-                  icon: const Icon(Icons.save),
-                  label: const Text("저장"))
-            ],
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Channel : "),
+          SizedBox(
+            width: 300,
+            child: TextField(
+              controller: _channelController,
+              onChanged: (text) {
+                setState(() {
+                  _channel = text;
+                });
+              },
+            ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Token : "),
-              SizedBox(
-                width: 300,
-                child: TextField(
-                  decoration: const InputDecoration(prefixText: "Bearer "),
-                  controller: _tokenController,
-                  obscureText: false,
-                  onChanged: (text) {
-                    setState(() {
-                      _token = text;
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(width: 10),
-              ElevatedButton.icon(
-                  onPressed: () {
-                    setState(() {
-                      Preferences.setToken(_token).then((value) {
-                        showSaveSnackBar(context, value);
-                      });
-                    });
-                  },
-                  icon: const Icon(Icons.save),
-                  label: const Text("저장"))
-            ],
-          )
-        ]));
+          const SizedBox(width: 10),
+          ElevatedButton.icon(
+              onPressed: () {
+                setState(() {
+                  Preferences.setChannel(_channel).then((value) {
+                    showSaveSnackBar(context, value);
+                  });
+                });
+              },
+              icon: const Icon(Icons.save),
+              label: const Text("저장"))
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Token : "),
+          SizedBox(
+            width: 300,
+            child: TextField(
+              decoration: const InputDecoration(prefixText: "Bearer "),
+              controller: _tokenController,
+              obscureText: false,
+              onChanged: (text) {
+                setState(() {
+                  _token = text;
+                });
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton.icon(
+              onPressed: () {
+                setState(() {
+                  Preferences.setToken(_token).then((value) {
+                    showSaveSnackBar(context, value);
+                  });
+                });
+              },
+              icon: const Icon(Icons.save),
+              label: const Text("저장"))
+        ],
+      )
+    ]));
   }
 
   void showSaveSnackBar(BuildContext context, bool value) {

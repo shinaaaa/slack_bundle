@@ -40,7 +40,6 @@ class _ScheduleMessageListStatefulWidgetState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('예약 목록')),
         body: Container(
             margin: const EdgeInsets.fromLTRB(70, 30, 70, 0),
             child: messages.isEmpty

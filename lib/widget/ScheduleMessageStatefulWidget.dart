@@ -49,90 +49,85 @@ class _ScheduleMessageStatefulWidgetState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('예약 메시지')),
         body: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(children: [
-            Container(
-                margin: const EdgeInsets.fromLTRB(0, 50, 0, 30),
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  const SizedBox(width: 50),
-                  ElevatedButton.icon(
-                      onPressed: () {
-                        Future<DateTime?> future =
-                            Util().getDatePicker(context);
-                        future.then((date) {
-                          setState(() {
-                            if (date == null) return;
-                            _date = date;
-                          });
-                        });
-                      },
-                      icon: const Icon(Icons.date_range),
-                      label: const Text('Date')),
-                  const SizedBox(width: 10),
-                  Text(
-                    '${_date.year}.${_date.month}.${_date.day}',
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                  const SizedBox(width: 50),
-                  ElevatedButton.icon(
-                      onPressed: () {
-                        Future<TimeOfDay?> future =
-                            Util().getTimePicker(context);
-                        future.then((time) {
-                          setState(() {
-                            if (time == null) return;
-                            _time = time;
-                          });
-                        });
-                      },
-                      icon: const Icon(Icons.access_time_sharp),
-                      label: const Text('Time')),
-                  const SizedBox(width: 10),
-                  Text('${_time.hour}:${_time.minute}',
-                      style: const TextStyle(fontSize: 20)),
-                ])),
-            Container(
-                margin: const EdgeInsets.fromLTRB(70, 0, 70, 30),
-                child: Form(
-                    key: _formKey,
-                    child: TextFormField(
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Message',
-                            alignLabelWithHint: true),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        maxLength: 10000,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        minLines: 10,
-                        controller: _controller,
-                        onChanged: (text) {
-                          _msg = text;
-                        }))),
-            // textSection,
-            Container(
-                margin: const EdgeInsets.fromLTRB(0, 0, 0, 30),
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.send_sharp),
-                    onPressed: () {
-                      if (!_formKey.currentState!.validate()) return;
-                      showSendPopup(context);
+      scrollDirection: Axis.vertical,
+      child: Column(children: [
+        Container(
+            margin: const EdgeInsets.fromLTRB(0, 50, 0, 30),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const SizedBox(width: 50),
+              ElevatedButton.icon(
+                  onPressed: () {
+                    Future<DateTime?> future = Util().getDatePicker(context);
+                    future.then((date) {
+                      setState(() {
+                        if (date == null) return;
+                        _date = date;
+                      });
+                    });
+                  },
+                  icon: const Icon(Icons.date_range),
+                  label: const Text('Date')),
+              const SizedBox(width: 10),
+              Text(
+                '${_date.year}.${_date.month}.${_date.day}',
+                style: const TextStyle(fontSize: 20),
+              ),
+              const SizedBox(width: 50),
+              ElevatedButton.icon(
+                  onPressed: () {
+                    Future<TimeOfDay?> future = Util().getTimePicker(context);
+                    future.then((time) {
+                      setState(() {
+                        if (time == null) return;
+                        _time = time;
+                      });
+                    });
+                  },
+                  icon: const Icon(Icons.access_time_sharp),
+                  label: const Text('Time')),
+              const SizedBox(width: 10),
+              Text('${_time.hour}:${_time.minute}',
+                  style: const TextStyle(fontSize: 20)),
+            ])),
+        Container(
+            margin: const EdgeInsets.fromLTRB(70, 0, 70, 30),
+            child: Form(
+                key: _formKey,
+                child: TextFormField(
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Message',
+                        alignLabelWithHint: true),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
                     },
-                    label: const Text('SEND MESSAGE'),
-                  )
-                ])),
-          ]),
-        ));
+                    maxLength: 10000,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    minLines: 10,
+                    controller: _controller,
+                    onChanged: (text) {
+                      _msg = text;
+                    }))),
+        // textSection,
+        Container(
+            margin: const EdgeInsets.fromLTRB(0, 0, 0, 30),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              ElevatedButton.icon(
+                icon: const Icon(Icons.send_sharp),
+                onPressed: () {
+                  if (!_formKey.currentState!.validate()) return;
+                  showSendPopup(context);
+                },
+                label: const Text('SEND MESSAGE'),
+              )
+            ])),
+      ]),
+    ));
   }
 
   Future<dynamic> showSendPopup(BuildContext ctx) {

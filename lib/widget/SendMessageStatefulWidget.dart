@@ -1,6 +1,5 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:slack_bundle/util/Preferences.dart';
 
 import '../model/Conversations.dart';
 import '../service/SlackService.dart';
@@ -54,99 +53,97 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('메시지 발송')),
         body: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(children: [
-            Container(
-                child: DropdownButton<String>(
-              value: _channel,
-              icon: const Icon(Icons.arrow_downward),
-              elevation: 16,
-              style: const TextStyle(color: Colors.deepPurple),
-              underline: Container(
-                height: 2,
-                color: Colors.deepPurpleAccent,
-              ),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _channel = newValue!;
-                });
-              },
-              items: dropdownItems,
-            )),
-            Container(
-                margin: const EdgeInsets.fromLTRB(70, 70, 70, 30),
-                child: Form(
-                    key: _formKey,
-                    child: TextFormField(
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Message',
-                            alignLabelWithHint: true),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        maxLength: 10000,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        minLines: 10,
-                        controller: _controller,
-                        onChanged: (text) {
-                          _msg = text;
-                        }))),
-            // textSection,
-            Container(
-                margin: const EdgeInsets.fromLTRB(0, 0, 0, 30),
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Row(
-                    children: [
-                      Text(_fileName),
-                      const SizedBox(width: 5),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          FilePickerResult? filePickerResult =
-                              await _filePicker.pickFiles();
-                          setState(() {
-                            if (filePickerResult == null) return;
-                            _fileName = filePickerResult.files.single.name;
-                            _filePath = filePickerResult.files.single.path!;
-                          });
-                        },
-                        icon: const Icon(Icons.file_upload),
-                        label: const Text("첨부 파일"),
-                      )
-                    ],
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.send_sharp),
-                    onPressed: () {
-                      if (_filePath.isEmpty) {
-                        if (!_formKey.currentState!.validate()) return;
-                        SlackService()
-                            .callPostMessage(_channel, _msg)
-                            .then((value) {
-                          if (value) _controller.text = "";
-                          showSendMessageResultSnackBar(context, value);
-                        });
-                        return;
+      scrollDirection: Axis.vertical,
+      child: Column(children: [
+        Container(
+            child: DropdownButton<String>(
+          value: _channel,
+          icon: const Icon(Icons.arrow_downward),
+          elevation: 16,
+          style: const TextStyle(color: Colors.deepPurple),
+          underline: Container(
+            height: 2,
+            color: Colors.deepPurpleAccent,
+          ),
+          onChanged: (String? newValue) {
+            setState(() {
+              _channel = newValue!;
+            });
+          },
+          items: dropdownItems,
+        )),
+        Container(
+            margin: const EdgeInsets.fromLTRB(70, 70, 70, 30),
+            child: Form(
+                key: _formKey,
+                child: TextFormField(
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Message',
+                        alignLabelWithHint: true),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter some text';
                       }
-                      SlackService()
-                          .callFileUpload(_channel, _msg, _filePath)
-                          .then((value) {
-                        showSendMessageResultSnackBar(context, value);
+                      return null;
+                    },
+                    maxLength: 10000,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    minLines: 10,
+                    controller: _controller,
+                    onChanged: (text) {
+                      _msg = text;
+                    }))),
+        // textSection,
+        Container(
+            margin: const EdgeInsets.fromLTRB(0, 0, 0, 30),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Row(
+                children: [
+                  Text(_fileName),
+                  const SizedBox(width: 5),
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      FilePickerResult? filePickerResult =
+                          await _filePicker.pickFiles();
+                      setState(() {
+                        if (filePickerResult == null) return;
+                        _fileName = filePickerResult.files.single.name;
+                        _filePath = filePickerResult.files.single.path!;
                       });
                     },
-                    label: const Text('SEND MESSAGE'),
-                  ),
-                ]))
-          ]),
-        ));
+                    icon: const Icon(Icons.file_upload),
+                    label: const Text("첨부 파일"),
+                  )
+                ],
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.send_sharp),
+                onPressed: () {
+                  if (_filePath.isEmpty) {
+                    if (!_formKey.currentState!.validate()) return;
+                    SlackService()
+                        .callPostMessage(_channel, _msg)
+                        .then((value) {
+                      if (value) _controller.text = "";
+                      showSendMessageResultSnackBar(context, value);
+                    });
+                    return;
+                  }
+                  SlackService()
+                      .callFileUpload(_channel, _msg, _filePath)
+                      .then((value) {
+                    showSendMessageResultSnackBar(context, value);
+                  });
+                },
+                label: const Text('SEND MESSAGE'),
+              ),
+            ]))
+      ]),
+    ));
   }
 
   void showSendMessageResultSnackBar(BuildContext context, value) {
