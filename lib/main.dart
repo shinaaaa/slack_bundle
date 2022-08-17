@@ -63,7 +63,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     });
   }
 
-  static const List<String> _selectedTitle = <String>[
+  static const List<String> _menuTitle = <String>[
     "메시지 발송",
     "예약 메시지",
     "예약 목록",
@@ -73,26 +73,26 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(_selectedTitle.elementAt(_selectedIndex))),
+        appBar: AppBar(title: Text(_menuTitle.elementAt(_selectedIndex))),
         body: _widgetOptions.elementAt(_selectedIndex),
         bottomNavigationBar: BottomNavigationBar(
           elevation: 1,
-          items: const <BottomNavigationBarItem>[
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.message),
-              label: '메시지 전송',
+              icon: const Icon(Icons.message),
+              label: _menuTitle.elementAt(0),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.event),
-              label: '예약 메시지',
+              icon: const Icon(Icons.event),
+              label: _menuTitle.elementAt(1),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.list),
-              label: '예약 목록',
+              icon: const Icon(Icons.list),
+              label: _menuTitle.elementAt(2),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: '설정',
+              icon: const Icon(Icons.settings),
+              label: _menuTitle.elementAt(3),
             ),
           ],
           type: BottomNavigationBarType.fixed,
