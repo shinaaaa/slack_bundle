@@ -159,8 +159,7 @@ class _ScheduleMessageStatefulWidgetState
                   icon: const Icon(Icons.access_time_sharp),
                   label: const Text('Time')),
               const SizedBox(width: 10),
-              Text('${_time.hour}:${_time.minute}',
-                  style: const TextStyle(fontSize: 20)),
+              Text(_time.format(context), style: const TextStyle(fontSize: 20)),
             ])),
         Container(
             margin: const EdgeInsets.fromLTRB(70, 0, 70, 30),
