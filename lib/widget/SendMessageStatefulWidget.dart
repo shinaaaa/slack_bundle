@@ -22,17 +22,16 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
   String _filePath = "";
   String _channel = "";
   List<DropdownMenuItem<String>> dropdownItems = [];
-  String _isPublicTitle = "공개채널";
   bool _isPublic = true;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    createDropdownItems(_isPublic);
+    _createDropdownItems(_isPublic);
   }
 
-  void createDropdownItems(bool isPublic) async {
+  void _createDropdownItems(bool isPublic) async {
     if (isPublic) {
       List<Channels> channels =
           await ConversationService().callConversationsList("public_channel");
@@ -42,7 +41,6 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
           return DropdownMenuItem(value: channel.id, child: Text(channel.name));
         }).toList();
         _channel = channels.first.id;
-        _isPublicTitle = "공개채널";
       });
     } else {
       List<Channels> channels =
@@ -53,9 +51,13 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
           return DropdownMenuItem(value: channel.id, child: Text(channel.name));
         }).toList();
         _channel = channels.first.id;
-        _isPublicTitle = "비공개채널";
       });
     }
+  }
+
+  String _channelType(bool isPublic) {
+    if (isPublic) return "공개채널";
+    return "비공개채널";
   }
 
   @override
@@ -79,14 +81,14 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                 width: 155,
                 child: SwitchListTile(
                     title: Text(
-                      _isPublicTitle,
+                      _channelType(_isPublic),
                       style: const TextStyle(fontSize: 12),
                     ),
                     value: _isPublic,
                     onChanged: (bool value) {
                       setState(() {
                         _isPublic = value;
-                        createDropdownItems(_isPublic);
+                        _createDropdownItems(_isPublic);
                       });
                     }),
               ),
