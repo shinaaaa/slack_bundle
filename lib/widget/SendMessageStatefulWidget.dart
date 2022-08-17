@@ -134,24 +134,20 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                     }))),
         // textSection,
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Row(
-            children: [
-              Text(_fileName),
-              const SizedBox(width: 5),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  FilePickerResult? filePickerResult =
-                      await _filePicker.pickFiles();
-                  setState(() {
-                    if (filePickerResult == null) return;
-                    _fileName = filePickerResult.files.single.name;
-                    _filePath = filePickerResult.files.single.path!;
-                  });
-                },
-                icon: const Icon(Icons.file_upload),
-                label: const Text("첨부 파일"),
-              )
-            ],
+          Text(_fileName),
+          const SizedBox(width: 5),
+          ElevatedButton.icon(
+            onPressed: () async {
+              FilePickerResult? filePickerResult =
+                  await _filePicker.pickFiles();
+              setState(() {
+                if (filePickerResult == null) return;
+                _fileName = filePickerResult.files.single.name;
+                _filePath = filePickerResult.files.single.path!;
+              });
+            },
+            icon: const Icon(Icons.file_upload),
+            label: const Text("첨부 파일"),
           ),
           const SizedBox(width: 10),
           ElevatedButton.icon(
