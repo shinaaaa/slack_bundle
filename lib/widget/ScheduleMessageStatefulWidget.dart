@@ -86,7 +86,7 @@ class _ScheduleMessageStatefulWidgetState
       scrollDirection: Axis.vertical,
       child: Column(children: [
         Container(
-          margin: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+          margin: const EdgeInsets.fromLTRB(0, 50, 0, 30),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -125,7 +125,7 @@ class _ScheduleMessageStatefulWidgetState
           ),
         ),
         Container(
-            margin: const EdgeInsets.fromLTRB(0, 50, 0, 30),
+            margin: const EdgeInsets.fromLTRB(0, 0, 0, 30),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               const SizedBox(width: 50),
               ElevatedButton.icon(

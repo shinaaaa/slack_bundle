@@ -35,7 +35,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
     String type = "public_channel";
     if (!isPublic) type = "private_channel";
     List<Channels> channels =
-    await ConversationService().callConversationsList(type);
+        await ConversationService().callConversationsList(type);
     if (channels.isEmpty) {
       setState(() {
         dropdownItems = [
