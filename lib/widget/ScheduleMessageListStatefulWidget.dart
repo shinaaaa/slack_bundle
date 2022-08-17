@@ -16,9 +16,9 @@ class ScheduleMessageListStatefulWidget extends StatefulWidget {
 
 class _ScheduleMessageListStatefulWidgetState
     extends State<ScheduleMessageListStatefulWidget> {
-  List<Message> messages = [];
+  List<Message> _messages = [];
   String _channel = "";
-  List<DropdownMenuItem<String>> dropdownItems = [];
+  List<DropdownMenuItem<String>> _dropdownItems = [];
   bool _isPublic = true;
 
   @override
@@ -39,20 +39,22 @@ class _ScheduleMessageListStatefulWidgetState
         await ConversationService().callConversationsList(type);
     if (channels.isEmpty) {
       setState(() {
-        dropdownItems = [
+        _dropdownItems = [
           const DropdownMenuItem(value: "0", child: Text('채널 없음'))
         ];
         _channel = "0";
       });
+      _messages = [];
       return;
     }
     channels.sort((a, b) => a.name.compareTo(b.name));
     setState(() {
-      dropdownItems = channels.map((channel) {
+      _dropdownItems = channels.map((channel) {
         return DropdownMenuItem(value: channel.id, child: Text(channel.name));
       }).toList();
       _channel = channels.first.id;
     });
+    _callScheduledMessagesList();
   }
 
   String _channelType(bool isPublic) {
@@ -94,20 +96,13 @@ class _ScheduleMessageListStatefulWidgetState
               onChanged: (String? newValue) {
                 setState(() {
                   _channel = newValue!;
-                  SendMessageService()
-                      .callScheduledMessagesList(_channel)
-                      .then((value) {
-                    setState(() {
-                      if (value == null) return;
-                      messages = value.scheduledMessages;
-                    });
-                  });
+                  _callScheduledMessagesList();
                 });
               },
-              items: dropdownItems,
+              items: _dropdownItems,
             )
           ])),
-      messages.isEmpty
+      _messages.isEmpty
           ? const Expanded(
               child: Center(
                   child: Text(
@@ -118,7 +113,7 @@ class _ScheduleMessageListStatefulWidgetState
               child: Container(
                   margin: const EdgeInsets.fromLTRB(70, 30, 70, 0),
                   child: ListView.builder(
-                      itemCount: messages.length,
+                      itemCount: _messages.length,
                       itemBuilder: (_, index) {
                         return Card(
                           child: ListTile(
@@ -126,16 +121,25 @@ class _ScheduleMessageListStatefulWidgetState
                               showDeletePopup(context, index);
                             },
                             title: Text(
-                              messages[index].text,
+                              _messages[index].text,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                             subtitle: Text(
-                                '예약 시간 : ${convertTime(messages[index].postAt)}'),
+                                '예약 시간 : ${convertTime(_messages[index].postAt)}'),
                           ),
                         );
                       })))
     ]));
+  }
+
+  void _callScheduledMessagesList() {
+    SendMessageService().callScheduledMessagesList(_channel).then((value) {
+      setState(() {
+        if (value == null) return;
+        _messages = value.scheduledMessages;
+      });
+    });
   }
 
   void showDeletePopup(BuildContext ctx, int index) {
@@ -158,7 +162,7 @@ class _ScheduleMessageListStatefulWidgetState
                   Navigator.pop(context, "Ok");
                   SendMessageService()
                       .callDeleteScheduledMessagesList(
-                          messages[index].channelId, messages[index].id)
+                          _messages[index].channelId, _messages[index].id)
                       .then((value) {
                     ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
                         content: Text(value ? "삭제성공" : "삭제실패"),
@@ -166,7 +170,7 @@ class _ScheduleMessageListStatefulWidgetState
                             value ? Colors.blueAccent : Colors.redAccent));
                     if (!value) return;
                     setState(() {
-                      messages.removeAt(index);
+                      _messages.removeAt(index);
                     });
                   });
                 },
