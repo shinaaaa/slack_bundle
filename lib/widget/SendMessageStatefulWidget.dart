@@ -134,8 +134,14 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                     }))),
         // textSection,
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(_fileName),
-          const SizedBox(width: 5),
+          Container(
+              decoration: const BoxDecoration(
+                  border: Border(bottom: BorderSide(color: Colors.blue))),
+              width: 200,
+              child: Text(_fileName,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis)),
+          const SizedBox(width: 10),
           ElevatedButton.icon(
             onPressed: () async {
               FilePickerResult? filePickerResult =
