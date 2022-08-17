@@ -13,6 +13,9 @@ class ConversationService {
             }));
     if (response.statusCode != 200) return [];
     Conversations conversations = Conversations.fromJson(response.data);
-    return conversations.channels;
+
+    return conversations.channels
+        .where((channel) => channel.isMember == true)
+        .toList();
   }
 }

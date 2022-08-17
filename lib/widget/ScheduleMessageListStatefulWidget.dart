@@ -33,27 +33,26 @@ class _ScheduleMessageListStatefulWidgetState
   }
 
   void _createDropdownItems(bool isPublic) async {
-    if (isPublic) {
-      List<Channels> channels =
-          await ConversationService().callConversationsList("public_channel");
-      channels.sort((a, b) => a.name.compareTo(b.name));
+    String type = "public_channel";
+    if (!isPublic) type = "private_channel";
+    List<Channels> channels =
+        await ConversationService().callConversationsList(type);
+    if (channels.isEmpty) {
       setState(() {
-        dropdownItems = channels.map((channel) {
-          return DropdownMenuItem(value: channel.id, child: Text(channel.name));
-        }).toList();
-        _channel = channels.first.id;
+        dropdownItems = [
+          const DropdownMenuItem(value: "0", child: Text('채널 없음'))
+        ];
+        _channel = "0";
       });
-    } else {
-      List<Channels> channels =
-          await ConversationService().callConversationsList("private_channel");
-      channels.sort((a, b) => a.name.compareTo(b.name));
-      setState(() {
-        dropdownItems = channels.map((channel) {
-          return DropdownMenuItem(value: channel.id, child: Text(channel.name));
-        }).toList();
-        _channel = channels.first.id;
-      });
+      return;
     }
+    channels.sort((a, b) => a.name.compareTo(b.name));
+    setState(() {
+      dropdownItems = channels.map((channel) {
+        return DropdownMenuItem(value: channel.id, child: Text(channel.name));
+      }).toList();
+      _channel = channels.first.id;
+    });
   }
 
   String _channelType(bool isPublic) {
@@ -66,7 +65,7 @@ class _ScheduleMessageListStatefulWidgetState
     return Scaffold(
         body: Column(children: [
       Container(
-          margin: const EdgeInsets.fromLTRB(0, 70, 0, 30),
+          margin: const EdgeInsets.fromLTRB(0, 50, 0, 0),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             SizedBox(
               width: 155,
@@ -117,7 +116,7 @@ class _ScheduleMessageListStatefulWidgetState
             )))
           : Expanded(
               child: Container(
-                  margin: const EdgeInsets.fromLTRB(70, 0, 70, 0),
+                  margin: const EdgeInsets.fromLTRB(70, 30, 70, 0),
                   child: ListView.builder(
                       itemCount: messages.length,
                       itemBuilder: (_, index) {

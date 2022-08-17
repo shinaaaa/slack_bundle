@@ -52,27 +52,26 @@ class _ScheduleMessageStatefulWidgetState
   }
 
   void _createDropdownItems(bool isPublic) async {
-    if (isPublic) {
-      List<Channels> channels =
-          await ConversationService().callConversationsList("public_channel");
-      channels.sort((a, b) => a.name.compareTo(b.name));
+    String type = "public_channel";
+    if (!isPublic) type = "private_channel";
+    List<Channels> channels =
+        await ConversationService().callConversationsList(type);
+    if (channels.isEmpty) {
       setState(() {
-        dropdownItems = channels.map((channel) {
-          return DropdownMenuItem(value: channel.id, child: Text(channel.name));
-        }).toList();
-        _channel = channels.first.id;
+        dropdownItems = [
+          const DropdownMenuItem(value: "0", child: Text('채널 없음'))
+        ];
+        _channel = "0";
       });
-    } else {
-      List<Channels> channels =
-          await ConversationService().callConversationsList("private_channel");
-      channels.sort((a, b) => a.name.compareTo(b.name));
-      setState(() {
-        dropdownItems = channels.map((channel) {
-          return DropdownMenuItem(value: channel.id, child: Text(channel.name));
-        }).toList();
-        _channel = channels.first.id;
-      });
+      return;
     }
+    channels.sort((a, b) => a.name.compareTo(b.name));
+    setState(() {
+      dropdownItems = channels.map((channel) {
+        return DropdownMenuItem(value: channel.id, child: Text(channel.name));
+      }).toList();
+      _channel = channels.first.id;
+    });
   }
 
   String _channelType(bool isPublic) {
