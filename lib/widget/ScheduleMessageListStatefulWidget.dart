@@ -95,7 +95,6 @@ class _ScheduleMessageListStatefulWidgetState
               onChanged: (String? newValue) {
                 setState(() {
                   _channel = newValue!;
-                  print(_channel);
                   SendMessageService()
                       .callScheduledMessagesList(_channel)
                       .then((value) {
