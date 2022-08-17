@@ -20,30 +20,42 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
   var _msg = "";
   String _fileName = "";
   String _filePath = "";
-  String _channel2 = "";
   String _channel = "";
   List<DropdownMenuItem<String>> dropdownItems = [];
+  String _isPublicTitle = "공개채널";
+  bool _isPublic = true;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    // Preferences.getChannel().then((value) {
-    //   _channel = value;
-    // });
-    createDropdownItems();
+    createDropdownItems(_isPublic);
   }
 
-  void createDropdownItems() async {
-    List<Channels> channels =
-        await ConversationService().callConversationsList();
-    channels.sort((a, b) => a.name.compareTo(b.name));
-    setState(() {
-      dropdownItems = channels.map((channel) {
-        return DropdownMenuItem(value: channel.id, child: Text(channel.name));
-      }).toList();
-      _channel = channels.first.id;
-    });
+  void createDropdownItems(bool isPublic) async {
+    if (isPublic) {
+      List<Channels> channels =
+          await ConversationService().callConversationsList("public_channel");
+      channels.sort((a, b) => a.name.compareTo(b.name));
+      setState(() {
+        dropdownItems = channels.map((channel) {
+          return DropdownMenuItem(value: channel.id, child: Text(channel.name));
+        }).toList();
+        _channel = channels.first.id;
+        _isPublicTitle = "공개채널";
+      });
+    } else {
+      List<Channels> channels =
+          await ConversationService().callConversationsList("private_channel");
+      channels.sort((a, b) => a.name.compareTo(b.name));
+      setState(() {
+        dropdownItems = channels.map((channel) {
+          return DropdownMenuItem(value: channel.id, child: Text(channel.name));
+        }).toList();
+        _channel = channels.first.id;
+        _isPublicTitle = "비공개채널";
+      });
+    }
   }
 
   @override
@@ -59,24 +71,46 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
       scrollDirection: Axis.vertical,
       child: Column(children: [
         Container(
-            child: DropdownButton<String>(
-          value: _channel,
-          icon: const Icon(Icons.arrow_downward),
-          elevation: 16,
-          style: const TextStyle(color: Colors.deepPurple),
-          underline: Container(
-            height: 2,
-            color: Colors.deepPurpleAccent,
+          margin: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 155,
+                child: SwitchListTile(
+                    title: Text(
+                      _isPublicTitle,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    value: _isPublic,
+                    onChanged: (bool value) {
+                      setState(() {
+                        _isPublic = value;
+                        createDropdownItems(_isPublic);
+                      });
+                    }),
+              ),
+              DropdownButton<String>(
+                value: _channel,
+                icon: const Icon(Icons.arrow_downward),
+                elevation: 16,
+                style: const TextStyle(color: Colors.deepPurple),
+                underline: Container(
+                  height: 2,
+                  color: Colors.deepPurpleAccent,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _channel = newValue!;
+                  });
+                },
+                items: dropdownItems,
+              ),
+            ],
           ),
-          onChanged: (String? newValue) {
-            setState(() {
-              _channel = newValue!;
-            });
-          },
-          items: dropdownItems,
-        )),
+        ),
         Container(
-            margin: const EdgeInsets.fromLTRB(70, 70, 70, 30),
+            margin: const EdgeInsets.fromLTRB(70, 30, 70, 60),
             child: Form(
                 key: _formKey,
                 child: TextFormField(
@@ -99,51 +133,49 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                       _msg = text;
                     }))),
         // textSection,
-        Container(
-            margin: const EdgeInsets.fromLTRB(0, 0, 0, 30),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Row(
-                children: [
-                  Text(_fileName),
-                  const SizedBox(width: 5),
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      FilePickerResult? filePickerResult =
-                          await _filePicker.pickFiles();
-                      setState(() {
-                        if (filePickerResult == null) return;
-                        _fileName = filePickerResult.files.single.name;
-                        _filePath = filePickerResult.files.single.path!;
-                      });
-                    },
-                    icon: const Icon(Icons.file_upload),
-                    label: const Text("첨부 파일"),
-                  )
-                ],
-              ),
-              const SizedBox(width: 10),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Row(
+            children: [
+              Text(_fileName),
+              const SizedBox(width: 5),
               ElevatedButton.icon(
-                icon: const Icon(Icons.send_sharp),
-                onPressed: () {
-                  if (_filePath.isEmpty) {
-                    if (!_formKey.currentState!.validate()) return;
-                    SendMessageService()
-                        .callPostMessage(_channel, _msg)
-                        .then((value) {
-                      if (value) _controller.text = "";
-                      showSendMessageResultSnackBar(context, value);
-                    });
-                    return;
-                  }
-                  SendMessageService()
-                      .callFileUpload(_channel, _msg, _filePath)
-                      .then((value) {
-                    showSendMessageResultSnackBar(context, value);
+                onPressed: () async {
+                  FilePickerResult? filePickerResult =
+                      await _filePicker.pickFiles();
+                  setState(() {
+                    if (filePickerResult == null) return;
+                    _fileName = filePickerResult.files.single.name;
+                    _filePath = filePickerResult.files.single.path!;
                   });
                 },
-                label: const Text('SEND MESSAGE'),
-              ),
-            ]))
+                icon: const Icon(Icons.file_upload),
+                label: const Text("첨부 파일"),
+              )
+            ],
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.send_sharp),
+            onPressed: () {
+              if (_filePath.isEmpty) {
+                if (!_formKey.currentState!.validate()) return;
+                SendMessageService()
+                    .callPostMessage(_channel, _msg)
+                    .then((value) {
+                  if (value) _controller.text = "";
+                  showSendMessageResultSnackBar(context, value);
+                });
+                return;
+              }
+              SendMessageService()
+                  .callFileUpload(_channel, _msg, _filePath)
+                  .then((value) {
+                showSendMessageResultSnackBar(context, value);
+              });
+            },
+            label: const Text('SEND MESSAGE'),
+          ),
+        ])
       ]),
     ));
   }
