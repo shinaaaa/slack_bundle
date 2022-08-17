@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import '../model/Conversations.dart';
+import '../model/PostMessage.dart';
 import '../model/ScheduledMessage.dart';
 import '../util/Preferences.dart';
 
@@ -13,7 +13,7 @@ class SendMessageService {
         options: Options(headers: {"authorization": "Bearer $token"}));
 
     if (response.statusCode != 200) return false;
-    Slack result = Slack.fromJson(response.data);
+    PostMessage result = PostMessage.fromJson(response.data);
     return result.ok;
   }
 
