@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:slack_bundle/util/Preferences.dart';
 
+import '../model/Conversations.dart';
+import '../service/ConversationService.dart';
 import '../service/SendMessageService.dart';
 import '../util/Util.dart';
 
@@ -21,10 +23,13 @@ class _ScheduleMessageStatefulWidgetState
   late TimeOfDay _time;
   var _msg = "";
   String _channel = "";
+  List<DropdownMenuItem<String>> dropdownItems = [];
+  bool _isPublic = true;
 
   @override
   void initState() {
     super.initState();
+    _createDropdownItems(_isPublic);
     _controller = TextEditingController();
     _date = DateTime.now();
     _time = TimeOfDay.now();
@@ -46,12 +51,80 @@ class _ScheduleMessageStatefulWidgetState
     return "${time.millisecondsSinceEpoch ~/ 1000}";
   }
 
+  void _createDropdownItems(bool isPublic) async {
+    if (isPublic) {
+      List<Channels> channels =
+          await ConversationService().callConversationsList("public_channel");
+      channels.sort((a, b) => a.name.compareTo(b.name));
+      setState(() {
+        dropdownItems = channels.map((channel) {
+          return DropdownMenuItem(value: channel.id, child: Text(channel.name));
+        }).toList();
+        _channel = channels.first.id;
+      });
+    } else {
+      List<Channels> channels =
+          await ConversationService().callConversationsList("private_channel");
+      channels.sort((a, b) => a.name.compareTo(b.name));
+      setState(() {
+        dropdownItems = channels.map((channel) {
+          return DropdownMenuItem(value: channel.id, child: Text(channel.name));
+        }).toList();
+        _channel = channels.first.id;
+      });
+    }
+  }
+
+  String _channelType(bool isPublic) {
+    if (isPublic) return "공개채널";
+    return "비공개채널";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(children: [
+        Container(
+          margin: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 155,
+                child: SwitchListTile(
+                    title: Text(
+                      _channelType(_isPublic),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    value: _isPublic,
+                    onChanged: (bool value) {
+                      setState(() {
+                        _isPublic = value;
+                        _createDropdownItems(_isPublic);
+                      });
+                    }),
+              ),
+              DropdownButton<String>(
+                value: _channel,
+                icon: const Icon(Icons.arrow_downward),
+                elevation: 16,
+                style: const TextStyle(color: Colors.deepPurple),
+                underline: Container(
+                  height: 2,
+                  color: Colors.deepPurpleAccent,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _channel = newValue!;
+                  });
+                },
+                items: dropdownItems,
+              ),
+            ],
+          ),
+        ),
         Container(
             margin: const EdgeInsets.fromLTRB(0, 50, 0, 30),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [

@@ -28,10 +28,10 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _createDropdownItems(_isPublic);
+    createDropdownItems(_isPublic);
   }
 
-  void _createDropdownItems(bool isPublic) async {
+  void createDropdownItems(bool isPublic) async {
     if (isPublic) {
       List<Channels> channels =
           await ConversationService().callConversationsList("public_channel");
@@ -88,7 +88,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                     onChanged: (bool value) {
                       setState(() {
                         _isPublic = value;
-                        _createDropdownItems(_isPublic);
+                        createDropdownItems(_isPublic);
                       });
                     }),
               ),
