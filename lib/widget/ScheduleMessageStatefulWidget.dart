@@ -218,13 +218,7 @@ class _ScheduleMessageStatefulWidgetState
           left: 0,
           child: Container(
               width: 96,
-              decoration: !_isPublic
-                  ? null
-                  : BoxDecoration(
-                      color: Colors.blue,
-                      border: Border.all(color: Colors.transparent, width: 1),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(25))),
+              decoration: _isSelectedButtonBoxDecoration(_isPublic),
               child: TextButton(
                   onPressed: () {
                     setState(() {
@@ -233,21 +227,13 @@ class _ScheduleMessageStatefulWidgetState
                     });
                   },
                   child: Text("공개채널",
-                      style: _isPublic
-                          ? const TextStyle(color: Colors.white)
-                          : const TextStyle(
-                              color: Color.fromRGBO(150, 150, 150, 1)))))),
+                      style: TextStyle(
+                          color: _isSelectedButtonTextColor(_isPublic)))))),
       Positioned(
           right: 0,
           child: Container(
               width: 100,
-              decoration: _isPublic
-                  ? null
-                  : BoxDecoration(
-                      color: Colors.blue,
-                      border: Border.all(color: Colors.transparent, width: 1),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(25))),
+              decoration: _isSelectedButtonBoxDecoration(!_isPublic),
               child: TextButton(
                   onPressed: () {
                     setState(() {
@@ -256,10 +242,21 @@ class _ScheduleMessageStatefulWidgetState
                     });
                   },
                   child: Text("비공개채널",
-                      style: !_isPublic
-                          ? const TextStyle(color: Colors.white)
-                          : const TextStyle(
-                              color: Color.fromRGBO(150, 150, 150, 1))))))
+                      style: TextStyle(
+                          color: _isSelectedButtonTextColor(!_isPublic))))))
     ]);
+  }
+
+  BoxDecoration? _isSelectedButtonBoxDecoration(bool selected) {
+    if (!selected) return null;
+    return BoxDecoration(
+        color: Colors.blue,
+        border: Border.all(color: Colors.transparent, width: 1),
+        borderRadius: const BorderRadius.all(Radius.circular(25)));
+  }
+
+  Color _isSelectedButtonTextColor(bool selected) {
+    if (selected) return Colors.white;
+    return const Color.fromRGBO(150, 150, 150, 1);
   }
 }
