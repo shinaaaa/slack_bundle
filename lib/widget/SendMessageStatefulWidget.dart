@@ -39,8 +39,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
     if (channels.isEmpty) {
       setState(() {
         _dropdownItems = [
-          const DropdownMenuItem(
-              value: "0", child: Text('채널 없음', style: TextStyle(fontSize: 14)))
+          const DropdownMenuItem(value: "0", child: Text('채널 없음'))
         ];
         _channel = "0";
       });
@@ -49,9 +48,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
     channels.sort((a, b) => a.name.compareTo(b.name));
     setState(() {
       _dropdownItems = channels.map((channel) {
-        return DropdownMenuItem(
-            value: channel.id,
-            child: Text(channel.name, style: TextStyle(fontSize: 14)));
+        return DropdownMenuItem(value: channel.id, child: Text(channel.name));
       }).toList();
       _channel = channels.first.id;
     });
@@ -105,10 +102,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                               _filePath = filePickerResult.files.single.path!;
                             });
                           },
-                          child: const Text(
-                            "첨부 파일",
-                            style: TextStyle(fontSize: 14),
-                          ))
+                          child: const Text("첨부 파일"))
                     ]),
                     const SizedBox(height: 50),
                     SizedBox(
@@ -133,8 +127,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                                 showSendMessageResultSnackBar(context, value);
                               });
                             },
-                            label: const Text('SEND MESSAGE',
-                                style: TextStyle(fontSize: 14))))
+                            label: const Text('SEND MESSAGE')))
                   ])
                 ]))));
   }
@@ -187,7 +180,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
   Stack _channelTypeSelect() {
     return Stack(clipBehavior: Clip.none, children: [
       Container(
-          width: 192,
+          width: 185,
           height: 30,
           decoration: BoxDecoration(
               color: const Color.fromRGBO(235, 235, 235, 1),
@@ -213,9 +206,8 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                   },
                   child: Text("공개채널",
                       style: _isPublic
-                          ? const TextStyle(color: Colors.white, fontSize: 14)
+                          ? const TextStyle(color: Colors.white)
                           : const TextStyle(
-                              fontSize: 14,
                               color: Color.fromRGBO(150, 150, 150, 1)))))),
       Positioned(
           right: 0,
@@ -237,9 +229,8 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                   },
                   child: Text("비공개채널",
                       style: !_isPublic
-                          ? const TextStyle(fontSize: 14, color: Colors.white)
+                          ? const TextStyle(color: Colors.white)
                           : const TextStyle(
-                              fontSize: 14,
                               color: Color.fromRGBO(150, 150, 150, 1))))))
     ]);
   }

@@ -111,18 +111,14 @@ class _ScheduleMessageStatefulWidgetState
                                       }
                                       showSendPopup(context);
                                     },
-                                    label: const Text('SEND MESSAGE',
-                                        style: TextStyle(fontSize: 14))))
+                                    label: const Text('SEND MESSAGE')))
                           ]))
                 ]))));
   }
 
   Row _selectTime(BuildContext context) {
     return Row(children: [
-      Text(
-        '${_date.year}.${_date.month}.${_date.day}',
-        style: const TextStyle(fontSize: 14),
-      ),
+      Text('${_date.year}.${_date.month}.${_date.day}'),
       IconButton(
           onPressed: () {
             Util().getDatePicker(context).then((date) {
@@ -135,7 +131,7 @@ class _ScheduleMessageStatefulWidgetState
           icon: const Icon(Icons.date_range,
               size: 18, color: Color.fromRGBO(120, 120, 120, 1))),
       const SizedBox(width: 10),
-      Text(_time.format(context), style: const TextStyle(fontSize: 14)),
+      Text(_time.format(context)),
       IconButton(
           onPressed: () {
             Util().getTimePicker(context).then((time) {
@@ -198,7 +194,7 @@ class _ScheduleMessageStatefulWidgetState
   Stack _channelTypeSelect() {
     return Stack(clipBehavior: Clip.none, children: [
       Container(
-          width: 192,
+          width: 185,
           height: 30,
           decoration: BoxDecoration(
               color: const Color.fromRGBO(235, 235, 235, 1),
@@ -224,9 +220,8 @@ class _ScheduleMessageStatefulWidgetState
                   },
                   child: Text("공개채널",
                       style: _isPublic
-                          ? const TextStyle(color: Colors.white, fontSize: 14)
+                          ? const TextStyle(color: Colors.white)
                           : const TextStyle(
-                              fontSize: 14,
                               color: Color.fromRGBO(150, 150, 150, 1)))))),
       Positioned(
           right: 0,
@@ -248,9 +243,8 @@ class _ScheduleMessageStatefulWidgetState
                   },
                   child: Text("비공개채널",
                       style: !_isPublic
-                          ? const TextStyle(fontSize: 14, color: Colors.white)
+                          ? const TextStyle(color: Colors.white)
                           : const TextStyle(
-                              fontSize: 14,
                               color: Color.fromRGBO(150, 150, 150, 1))))))
     ]);
   }

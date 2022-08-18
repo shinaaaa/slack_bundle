@@ -20,7 +20,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           fontFamily: "Nanum_Gothic",
           textTheme: const TextTheme(
-              bodyText1: TextStyle(fontSize: 14, fontWeight: FontWeight.w400))),
+              bodyText1: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+              bodyText2: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+              button: TextStyle(fontSize: 14, fontWeight: FontWeight.w400))),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

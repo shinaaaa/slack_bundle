@@ -171,7 +171,7 @@ class _ScheduleMessageListStatefulWidgetState
   Stack _channelTypeSelect() {
     return Stack(clipBehavior: Clip.none, children: [
       Container(
-          width: 192,
+          width: 185,
           height: 30,
           decoration: BoxDecoration(
               color: const Color.fromRGBO(235, 235, 235, 1),
@@ -197,9 +197,8 @@ class _ScheduleMessageListStatefulWidgetState
                   },
                   child: Text("공개채널",
                       style: _isPublic
-                          ? const TextStyle(color: Colors.white, fontSize: 14)
+                          ? const TextStyle(color: Colors.white)
                           : const TextStyle(
-                              fontSize: 14,
                               color: Color.fromRGBO(150, 150, 150, 1)))))),
       Positioned(
           right: 0,
@@ -221,9 +220,8 @@ class _ScheduleMessageListStatefulWidgetState
                   },
                   child: Text("비공개채널",
                       style: !_isPublic
-                          ? const TextStyle(fontSize: 14, color: Colors.white)
+                          ? const TextStyle(color: Colors.white)
                           : const TextStyle(
-                              fontSize: 14,
                               color: Color.fromRGBO(150, 150, 150, 1))))))
     ]);
   }
