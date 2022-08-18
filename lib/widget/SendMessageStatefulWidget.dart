@@ -123,6 +123,13 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                               SendMessageService()
                                   .callFileUpload(_channel, _msg, _filePath)
                                   .then((value) {
+                                if (value) {
+                                  _controller.text = "";
+                                  setState(() {
+                                    _filePath = "";
+                                    _fileName = "";
+                                  });
+                                }
                                 showSendMessageResultSnackBar(context, value);
                               });
                             },
