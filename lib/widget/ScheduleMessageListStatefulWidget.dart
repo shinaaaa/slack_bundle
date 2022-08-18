@@ -61,11 +61,11 @@ class _ScheduleMessageListStatefulWidgetState
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-            margin: const EdgeInsets.fromLTRB(70, 60, 70, 30),
+            margin: const EdgeInsets.fromLTRB(70, 65, 70, 30),
             child: Column(children: [
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 _channelTypeSelect(),
-                const SizedBox(width: 15),
+                const SizedBox(width: 20),
                 _channelDropdown()
               ]),
               _messages.isEmpty

@@ -93,7 +93,7 @@ class _ScheduleMessageStatefulWidgetState
                         ])
                       ]),
                   const SizedBox(height: 10),
-                  _messageForm(), // textSection,
+                  _messageForm(),
                   Container(
                       margin: const EdgeInsets.fromLTRB(0, 0, 0, 30),
                       child: Row(
@@ -120,6 +120,8 @@ class _ScheduleMessageStatefulWidgetState
     return Row(children: [
       Text('${_date.year}.${_date.month}.${_date.day}'),
       IconButton(
+          iconSize: 18,
+          color: const Color.fromRGBO(120, 120, 120, 1),
           onPressed: () {
             Util().getDatePicker(context).then((date) {
               setState(() {
@@ -128,11 +130,12 @@ class _ScheduleMessageStatefulWidgetState
               });
             });
           },
-          icon: const Icon(Icons.date_range,
-              size: 18, color: Color.fromRGBO(120, 120, 120, 1))),
+          icon: const Icon(Icons.date_range)),
       const SizedBox(width: 10),
       Text(_time.format(context)),
       IconButton(
+          iconSize: 18,
+          color: const Color.fromRGBO(120, 120, 120, 1),
           onPressed: () {
             Util().getTimePicker(context).then((time) {
               setState(() {
@@ -141,8 +144,7 @@ class _ScheduleMessageStatefulWidgetState
               });
             });
           },
-          icon: const Icon(Icons.access_time_sharp,
-              size: 18, color: Color.fromRGBO(120, 120, 120, 1)))
+          icon: const Icon(Icons.access_time_sharp))
     ]);
   }
 

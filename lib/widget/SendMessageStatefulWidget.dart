@@ -66,16 +66,15 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
         body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Container(
-                margin: const EdgeInsets.fromLTRB(70, 60, 70, 30),
+                margin: const EdgeInsets.fromLTRB(70, 65, 70, 30),
                 child: Column(children: [
                   Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                     _channelTypeSelect(),
                     const SizedBox(width: 15),
                     _channelDropdown()
                   ]),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   _messageForm(),
-                  // textSection,
                   Column(children: [
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Container(
