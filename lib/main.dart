@@ -15,17 +15,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: _title,
-      localizationsDelegates: [
+      theme: ThemeData(
+          fontFamily: "Nanum_Gothic",
+          textTheme: const TextTheme(
+              bodyText1: TextStyle(fontSize: 14, fontWeight: FontWeight.w400))),
+      localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
+      supportedLocales: const [
         Locale('ko', ''),
       ],
-      home: MyStatefulWidget(),
+      home: const MyStatefulWidget(),
     );
   }
 }
