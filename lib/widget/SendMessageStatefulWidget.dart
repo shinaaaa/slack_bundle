@@ -48,7 +48,14 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
     channels.sort((a, b) => a.name.compareTo(b.name));
     setState(() {
       _dropdownItems = channels.map((channel) {
-        return DropdownMenuItem(value: channel.id, child: Text(channel.name));
+        return DropdownMenuItem(
+            value: channel.id,
+            child: Text(
+              channel.name,
+              maxLines: 1,
+              overflow: TextOverflow.clip,
+              softWrap: false,
+            ));
       }).toList();
       _channel = channels.first.id;
     });
@@ -141,22 +148,24 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
   Container _channelDropdown() {
     return Container(
         padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+        width: 120,
         height: 30,
         decoration: BoxDecoration(
             border: Border.all(color: const Color.fromRGBO(200, 200, 200, 1)),
             borderRadius: BorderRadius.circular(5)),
-        child: DropdownButton<String>(
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+          isExpanded: true,
           value: _channel,
           icon: const Icon(Icons.expand_more),
           style: const TextStyle(color: Color(0xff281E26)),
-          underline: DropdownButtonHideUnderline(child: Container()),
           onChanged: (String? newValue) {
             setState(() {
               _channel = newValue!;
             });
           },
           items: _dropdownItems,
-        ));
+        )));
   }
 
   Form _messageForm() {
