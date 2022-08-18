@@ -42,7 +42,8 @@ class _SettingStatefulWidgetState extends State<SettingStatefulWidget> {
         height: 100,
       ),
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("Token : "),
+        const Icon(Icons.key_outlined, color: Color.fromRGBO(120, 120, 120, 1)),
+        const SizedBox(width: 10),
         SizedBox(
             width: 300,
             child: Form(
@@ -90,6 +91,7 @@ class _SettingStatefulWidgetState extends State<SettingStatefulWidget> {
       ElevatedButton.icon(
           style: const ButtonStyle(visualDensity: VisualDensity(horizontal: 4)),
           onPressed: () {
+            if (!_formKey.currentState!.validate()) return;
             if (!_auth.ok) {
               showSaveSnackBar(context, _auth.ok);
               return;
