@@ -72,7 +72,7 @@ class _ScheduleMessageListStatefulWidgetState
             child: Column(children: [
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 _channelTypeSelect(),
-                const SizedBox(width: 20),
+                const SizedBox(width: 15),
                 _channelDropdown()
               ]),
               _messages.isEmpty
