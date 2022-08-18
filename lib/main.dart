@@ -75,30 +75,32 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     return Scaffold(
         appBar: AppBar(title: Text(_menuTitle.elementAt(_selectedIndex))),
         body: _widgetOptions.elementAt(_selectedIndex),
-        bottomNavigationBar: BottomNavigationBar(
-          elevation: 30,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.message),
-              label: _menuTitle.elementAt(0),
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.event),
-              label: _menuTitle.elementAt(1),
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.list),
-              label: _menuTitle.elementAt(2),
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.settings),
-              label: _menuTitle.elementAt(3),
-            ),
-          ],
-          type: BottomNavigationBarType.fixed,
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.blue,
-          onTap: _onItemTapped,
-        ));
+        bottomNavigationBar: SizedBox(
+            height: 70,
+            child: BottomNavigationBar(
+              elevation: 30,
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.message),
+                  label: _menuTitle.elementAt(0),
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.event),
+                  label: _menuTitle.elementAt(1),
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.list),
+                  label: _menuTitle.elementAt(2),
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.settings),
+                  label: _menuTitle.elementAt(3),
+                ),
+              ],
+              type: BottomNavigationBarType.fixed,
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.blue,
+              onTap: _onItemTapped,
+            )));
   }
 }
