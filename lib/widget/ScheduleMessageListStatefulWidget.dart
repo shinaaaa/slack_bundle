@@ -114,16 +114,15 @@ class _ScheduleMessageListStatefulWidgetState
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("알림"),
             content: const Text("예약문자를 삭제하시겠습니까?"),
             actions: [
-              ElevatedButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context, "Cancel");
                 },
                 child: const Text("취소"),
               ),
-              ElevatedButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context, "Ok");
                   SendMessageService()

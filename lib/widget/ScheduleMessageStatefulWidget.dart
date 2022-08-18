@@ -109,7 +109,19 @@ class _ScheduleMessageStatefulWidgetState
                                       if (!_formKey.currentState!.validate()) {
                                         return;
                                       }
-                                      showSendPopup(context);
+                                      SendMessageService()
+                                          .callScheduleMessage(
+                                              _channel, _reservationTime, _msg)
+                                          .then((value) {
+                                        if (value) _controller.text = "";
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    value ? "저장 성공" : "저장실패"),
+                                                backgroundColor: value
+                                                    ? Colors.blueAccent
+                                                    : Colors.redAccent));
+                                      });
                                     },
                                     label: const Text('SEND MESSAGE')))
                           ]))
@@ -249,39 +261,5 @@ class _ScheduleMessageStatefulWidgetState
                           : const TextStyle(
                               color: Color.fromRGBO(150, 150, 150, 1))))))
     ]);
-  }
-
-  Future<dynamic> showSendPopup(BuildContext ctx) {
-    return showDialog(
-        context: ctx,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-              title: const Text("알림"),
-              content: const Text("예약문자를 전송하시겠습니까?"),
-              actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, "Cancel");
-                  },
-                  child: const Text("취소"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, "OK");
-                    SendMessageService()
-                        .callScheduleMessage(_channel, _reservationTime, _msg)
-                        .then((value) {
-                      if (value) _controller.text = "";
-                      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-                          content: Text(value ? "저장 성공" : "저장실패"),
-                          backgroundColor:
-                              value ? Colors.blueAccent : Colors.redAccent));
-                    });
-                  },
-                  child: const Text("전송"),
-                )
-              ]);
-        });
   }
 }
