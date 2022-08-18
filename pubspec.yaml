@@ -95,5 +95,6 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 msix_config:
-  display_name: Flutter App
-  msix_version: 1.0.0.0
+  display_name: Slack Bundle
+  msix_version: 1.0.1.0
+  capabilities: internetClient
