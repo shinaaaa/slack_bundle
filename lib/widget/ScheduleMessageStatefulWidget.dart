@@ -23,7 +23,7 @@ class _ScheduleMessageStatefulWidgetState
   late TimeOfDay _time;
   var _msg = "";
   String _channel = "";
-  List<DropdownMenuItem<String>> dropdownItems = [];
+  List<DropdownMenuItem<String>> _dropdownItems = [];
   bool _isPublic = true;
 
   @override
@@ -58,7 +58,7 @@ class _ScheduleMessageStatefulWidgetState
         await ConversationService().callConversationsList(type);
     if (channels.isEmpty) {
       setState(() {
-        dropdownItems = [
+        _dropdownItems = [
           const DropdownMenuItem(value: "0", child: Text('채널 없음'))
         ];
         _channel = "0";
@@ -67,138 +67,192 @@ class _ScheduleMessageStatefulWidgetState
     }
     channels.sort((a, b) => a.name.compareTo(b.name));
     setState(() {
-      dropdownItems = channels.map((channel) {
+      _dropdownItems = channels.map((channel) {
         return DropdownMenuItem(value: channel.id, child: Text(channel.name));
       }).toList();
       _channel = channels.first.id;
     });
   }
 
-  String _channelType(bool isPublic) {
-    if (isPublic) return "공개채널";
-    return "비공개채널";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(children: [
-        Container(
-          margin: const EdgeInsets.fromLTRB(0, 50, 0, 30),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 155,
-                child: SwitchListTile(
-                    title: Text(
-                      _channelType(_isPublic),
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    value: _isPublic,
-                    onChanged: (bool value) {
-                      setState(() {
-                        _isPublic = value;
-                        _createDropdownItems(_isPublic);
-                      });
-                    }),
-              ),
-              DropdownButton<String>(
-                value: _channel,
-                icon: const Icon(Icons.arrow_downward),
-                elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
-                underline: Container(
-                  height: 2,
-                  color: Colors.deepPurpleAccent,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _channel = newValue!;
-                  });
-                },
-                items: dropdownItems,
-              ),
-            ],
-          ),
-        ),
-        Container(
-            margin: const EdgeInsets.fromLTRB(0, 0, 0, 30),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const SizedBox(width: 50),
-              ElevatedButton.icon(
+            scrollDirection: Axis.vertical,
+            child: Container(
+                margin: const EdgeInsets.fromLTRB(70, 60, 70, 30),
+                child: Column(children: [
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _selectTime(context),
+                        Row(children: [
+                          _channelTypeSelect(),
+                          const SizedBox(width: 15),
+                          _channelDropdown()
+                        ])
+                      ]),
+                  const SizedBox(height: 10),
+                  _messageForm(), // textSection,
+                  Container(
+                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 30),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                                width: 200,
+                                height: 50,
+                                child: ElevatedButton.icon(
+                                    icon:
+                                        const Icon(Icons.send_sharp, size: 18),
+                                    onPressed: () {
+                                      if (!_formKey.currentState!.validate()) {
+                                        return;
+                                      }
+                                      showSendPopup(context);
+                                    },
+                                    label: const Text('SEND MESSAGE',
+                                        style: TextStyle(fontSize: 14))))
+                          ]))
+                ]))));
+  }
+
+  Row _selectTime(BuildContext context) {
+    return Row(children: [
+      Text(
+        '${_date.year}.${_date.month}.${_date.day}',
+        style: const TextStyle(fontSize: 14),
+      ),
+      IconButton(
+          onPressed: () {
+            Util().getDatePicker(context).then((date) {
+              setState(() {
+                if (date == null) return;
+                _date = date;
+              });
+            });
+          },
+          icon: const Icon(Icons.date_range,
+              size: 18, color: Color.fromRGBO(120, 120, 120, 1))),
+      const SizedBox(width: 10),
+      Text(_time.format(context), style: const TextStyle(fontSize: 14)),
+      IconButton(
+          onPressed: () {
+            Util().getTimePicker(context).then((time) {
+              setState(() {
+                if (time == null) return;
+                _time = time;
+              });
+            });
+          },
+          icon: const Icon(Icons.access_time_sharp,
+              size: 18, color: Color.fromRGBO(120, 120, 120, 1)))
+    ]);
+  }
+
+  Container _channelDropdown() {
+    return Container(
+        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+        height: 30,
+        decoration: BoxDecoration(
+            border: Border.all(color: const Color.fromRGBO(200, 200, 200, 1)),
+            borderRadius: BorderRadius.circular(5)),
+        child: DropdownButton<String>(
+          value: _channel,
+          icon: const Icon(Icons.expand_more),
+          style: const TextStyle(color: Color(0xff281E26)),
+          underline: DropdownButtonHideUnderline(child: Container()),
+          onChanged: (String? newValue) {
+            setState(() {
+              _channel = newValue!;
+            });
+          },
+          items: _dropdownItems,
+        ));
+  }
+
+  Form _messageForm() {
+    return Form(
+        key: _formKey,
+        child: TextFormField(
+            decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Message',
+                alignLabelWithHint: true),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Please enter some text';
+              }
+              return null;
+            },
+            maxLength: 10000,
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+            minLines: 10,
+            controller: _controller,
+            onChanged: (text) {
+              _msg = text;
+            }));
+  }
+
+  Stack _channelTypeSelect() {
+    return Stack(clipBehavior: Clip.none, children: [
+      Container(
+          width: 192,
+          height: 30,
+          decoration: BoxDecoration(
+              color: const Color.fromRGBO(235, 235, 235, 1),
+              border: Border.all(color: Colors.transparent),
+              borderRadius: const BorderRadius.all(Radius.circular(25)))),
+      Positioned(
+          left: 0,
+          child: Container(
+              width: 96,
+              decoration: !_isPublic
+                  ? null
+                  : BoxDecoration(
+                      color: Colors.blue,
+                      border: Border.all(color: Colors.transparent, width: 1),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(25))),
+              child: TextButton(
                   onPressed: () {
-                    Future<DateTime?> future = Util().getDatePicker(context);
-                    future.then((date) {
-                      setState(() {
-                        if (date == null) return;
-                        _date = date;
-                      });
+                    setState(() {
+                      _isPublic = true;
+                      _createDropdownItems(_isPublic);
                     });
                   },
-                  icon: const Icon(Icons.date_range),
-                  label: const Text('Date')),
-              const SizedBox(width: 10),
-              Text(
-                '${_date.year}.${_date.month}.${_date.day}',
-                style: const TextStyle(fontSize: 20),
-              ),
-              const SizedBox(width: 50),
-              ElevatedButton.icon(
+                  child: Text("공개채널",
+                      style: _isPublic
+                          ? const TextStyle(color: Colors.white, fontSize: 14)
+                          : const TextStyle(
+                              fontSize: 14,
+                              color: Color.fromRGBO(150, 150, 150, 1)))))),
+      Positioned(
+          right: 0,
+          child: Container(
+              width: 100,
+              decoration: _isPublic
+                  ? null
+                  : BoxDecoration(
+                      color: Colors.blue,
+                      border: Border.all(color: Colors.transparent, width: 1),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(25))),
+              child: TextButton(
                   onPressed: () {
-                    Future<TimeOfDay?> future = Util().getTimePicker(context);
-                    future.then((time) {
-                      setState(() {
-                        if (time == null) return;
-                        _time = time;
-                      });
+                    setState(() {
+                      _isPublic = false;
+                      _createDropdownItems(_isPublic);
                     });
                   },
-                  icon: const Icon(Icons.access_time_sharp),
-                  label: const Text('Time')),
-              const SizedBox(width: 10),
-              Text(_time.format(context), style: const TextStyle(fontSize: 20)),
-            ])),
-        Container(
-            margin: const EdgeInsets.fromLTRB(70, 0, 70, 30),
-            child: Form(
-                key: _formKey,
-                child: TextFormField(
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Message',
-                        alignLabelWithHint: true),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
-                    maxLength: 10000,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    minLines: 10,
-                    controller: _controller,
-                    onChanged: (text) {
-                      _msg = text;
-                    }))),
-        // textSection,
-        Container(
-            margin: const EdgeInsets.fromLTRB(0, 0, 0, 30),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              ElevatedButton.icon(
-                icon: const Icon(Icons.send_sharp),
-                onPressed: () {
-                  if (!_formKey.currentState!.validate()) return;
-                  showSendPopup(context);
-                },
-                label: const Text('SEND MESSAGE'),
-              )
-            ])),
-      ]),
-    ));
+                  child: Text("비공개채널",
+                      style: !_isPublic
+                          ? const TextStyle(fontSize: 14, color: Colors.white)
+                          : const TextStyle(
+                              fontSize: 14,
+                              color: Color.fromRGBO(150, 150, 150, 1))))))
+    ]);
   }
 
   Future<dynamic> showSendPopup(BuildContext ctx) {

@@ -57,61 +57,27 @@ class _ScheduleMessageListStatefulWidgetState
     _callScheduledMessagesList();
   }
 
-  String _channelType(bool isPublic) {
-    if (isPublic) return "공개채널";
-    return "비공개채널";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(children: [
-      Container(
-          margin: const EdgeInsets.fromLTRB(0, 50, 0, 0),
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            SizedBox(
-              width: 155,
-              child: SwitchListTile(
-                  title: Text(
-                    _channelType(_isPublic),
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                  value: _isPublic,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _isPublic = value;
-                      _createDropdownItems(_isPublic);
-                    });
-                  }),
-            ),
-            DropdownButton<String>(
-              value: _channel,
-              icon: const Icon(Icons.arrow_downward),
-              elevation: 16,
-              style: const TextStyle(color: Colors.deepPurple),
-              underline: Container(
-                height: 2,
-                color: Colors.deepPurpleAccent,
-              ),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _channel = newValue!;
-                  _callScheduledMessagesList();
-                });
-              },
-              items: _dropdownItems,
-            )
-          ])),
-      _messages.isEmpty
-          ? const Expanded(
-              child: Center(
-                  child: Text(
-              "예약 메시지가 없습니다.",
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
-            )))
-          : Expanded(
-              child: Container(
-                  margin: const EdgeInsets.fromLTRB(70, 30, 70, 0),
+        body: Container(
+            margin: const EdgeInsets.fromLTRB(70, 60, 70, 30),
+            child: Column(children: [
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                _channelTypeSelect(),
+                const SizedBox(width: 15),
+                _channelDropdown()
+              ]),
+              _messages.isEmpty
+                  ? const Expanded(
+                      child: Center(
+                          child: Text(
+                      "예약 메시지가 없습니다.",
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
+                    )))
+                  : const SizedBox(height: 10),
+              Expanded(
                   child: ListView.builder(
                       itemCount: _messages.length,
                       itemBuilder: (_, index) {
@@ -129,8 +95,8 @@ class _ScheduleMessageListStatefulWidgetState
                                 '예약 시간 : ${convertTime(_messages[index].postAt)}'),
                           ),
                         );
-                      })))
-    ]));
+                      }))
+            ])));
   }
 
   void _callScheduledMessagesList() {
@@ -179,6 +145,87 @@ class _ScheduleMessageListStatefulWidgetState
             ],
           );
         });
+  }
+
+  Container _channelDropdown() {
+    return Container(
+        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+        height: 30,
+        decoration: BoxDecoration(
+            border: Border.all(color: const Color.fromRGBO(200, 200, 200, 1)),
+            borderRadius: BorderRadius.circular(5)),
+        child: DropdownButton<String>(
+          value: _channel,
+          icon: const Icon(Icons.expand_more),
+          style: const TextStyle(color: Color(0xff281E26)),
+          underline: DropdownButtonHideUnderline(child: Container()),
+          onChanged: (String? newValue) {
+            setState(() {
+              _channel = newValue!;
+            });
+          },
+          items: _dropdownItems,
+        ));
+  }
+
+  Stack _channelTypeSelect() {
+    return Stack(clipBehavior: Clip.none, children: [
+      Container(
+          width: 192,
+          height: 30,
+          decoration: BoxDecoration(
+              color: const Color.fromRGBO(235, 235, 235, 1),
+              border: Border.all(color: Colors.transparent),
+              borderRadius: const BorderRadius.all(Radius.circular(25)))),
+      Positioned(
+          left: 0,
+          child: Container(
+              width: 96,
+              decoration: !_isPublic
+                  ? null
+                  : BoxDecoration(
+                      color: Colors.blue,
+                      border: Border.all(color: Colors.transparent, width: 1),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(25))),
+              child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _isPublic = true;
+                      _createDropdownItems(_isPublic);
+                    });
+                  },
+                  child: Text("공개채널",
+                      style: _isPublic
+                          ? const TextStyle(color: Colors.white, fontSize: 14)
+                          : const TextStyle(
+                              fontSize: 14,
+                              color: Color.fromRGBO(150, 150, 150, 1)))))),
+      Positioned(
+          right: 0,
+          child: Container(
+              width: 100,
+              decoration: _isPublic
+                  ? null
+                  : BoxDecoration(
+                      color: Colors.blue,
+                      border: Border.all(color: Colors.transparent, width: 1),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(25))),
+              child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _isPublic = false;
+                      _createDropdownItems(_isPublic);
+                    });
+                  },
+                  child: Text("비공개채널",
+                      style: !_isPublic
+                          ? const TextStyle(fontSize: 14, color: Colors.white)
+                          : const TextStyle(
+                              fontSize: 14,
+                              color: Color.fromRGBO(150, 150, 150, 1))))))
+    ]);
   }
 
   String convertTime(int msTime) {
