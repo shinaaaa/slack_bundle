@@ -170,6 +170,7 @@ class _ScheduleMessageListStatefulWidgetState
           onChanged: (String? newValue) {
             setState(() {
               _channel = newValue!;
+              _callScheduledMessagesList();
             });
           },
           items: _dropdownItems,
