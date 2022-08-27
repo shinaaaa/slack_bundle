@@ -20,7 +20,7 @@ jobs:
           git config --global user.name shinaaaa
           git config --global user.email shin029abc@gmail.com
           git status
-          git remote add origin https://$@github.com/shinaaaa/slack_bundle.git
+          git remote add origin https://github.com/shinaaaa/slack_bundle.git
           git checkout -b gh-pages
           git add --all
           git commit -m "update"
