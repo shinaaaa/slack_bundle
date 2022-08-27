@@ -14,7 +14,7 @@ jobs:
           channel: 'stable'
       - run: flutter pub get
       - run: flutter build web --release
-      - run:
+      - run: |
           cd /build/web
           git init
           git config --global user.email shin029abc@gmail.com
