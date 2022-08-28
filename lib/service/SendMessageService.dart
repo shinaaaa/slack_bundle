@@ -20,10 +20,10 @@ class SendMessageService {
   }
 
   Future callFileUpload(
-      String channel, String text, Uint8List fileBytes) async {
+      String channel, String text, Stream<List<int>> fileStream) async {
     var formData = FormData.fromMap({
       "channels": channel,
-      'file': await MultipartFile.fromBytes(fileBytes),
+      'file': fileStream,
       "initial_comment": text
     });
 
