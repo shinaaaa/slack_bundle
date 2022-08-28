@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:slack_bundle/service/ConversationService.dart';
@@ -15,11 +17,10 @@ class SendMessageStatefulWidget extends StatefulWidget {
 
 class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
   final _formKey = GlobalKey<FormState>();
-  final FilePicker _filePicker = FilePicker.platform;
   late TextEditingController _controller;
   var _msg = "";
   String _fileName = "";
-  String _filePath = "";
+  Uint8List _fileBytes = Uint8List(0);
   String _channel = "";
   List<DropdownMenuItem<String>> _dropdownItems = [];
   bool _isPublic = true;
@@ -100,12 +101,13 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                               backgroundColor: MaterialStateProperty.all<Color>(
                                   const Color.fromRGBO(150, 150, 150, 1))),
                           onPressed: () async {
-                            FilePickerResult? filePickerResult =
-                                await _filePicker.pickFiles();
+                            FilePickerResult? result =
+                                await FilePicker.platform.pickFiles();
+                            if (result == null) return;
                             setState(() {
-                              if (filePickerResult == null) return;
-                              _fileName = filePickerResult.files.single.name;
-                              _filePath = filePickerResult.files.single.path!;
+                              PlatformFile file = result.files.first;
+                              _fileName = file.name;
+                              _fileBytes = file.bytes!;
                             });
                           },
                           child: const Text("첨부 파일"))
@@ -117,7 +119,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                         child: ElevatedButton.icon(
                             icon: const Icon(Icons.send_sharp, size: 18),
                             onPressed: () {
-                              if (_filePath.isEmpty) {
+                              if (_fileBytes.isEmpty) {
                                 if (!_formKey.currentState!.validate()) return;
                                 SendMessageService()
                                     .callPostMessage(_channel, _msg)
@@ -128,12 +130,12 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                                 return;
                               }
                               SendMessageService()
-                                  .callFileUpload(_channel, _msg, _filePath)
+                                  .callFileUpload(_channel, _msg, _fileBytes)
                                   .then((value) {
                                 if (value) {
                                   _controller.text = "";
                                   setState(() {
-                                    _filePath = "";
+                                    _fileBytes = Uint8List(0);
                                     _fileName = "";
                                   });
                                 }
