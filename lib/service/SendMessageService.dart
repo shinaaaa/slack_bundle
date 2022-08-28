@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 
 import '../model/PostMessage.dart';
@@ -17,10 +19,11 @@ class SendMessageService {
     return result.ok;
   }
 
-  Future callFileUpload(String channel, String text, String filePath) async {
+  Future callFileUpload(
+      String channel, String text, Uint8List fileBytes) async {
     var formData = FormData.fromMap({
       "channels": channel,
-      'file': await MultipartFile.fromFile(filePath),
+      'file': await MultipartFile.fromBytes(fileBytes),
       "initial_comment": text
     });
 
