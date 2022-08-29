@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 
 import '../model/PostMessage.dart';
@@ -17,18 +19,20 @@ class SendMessageService {
     return result.ok;
   }
 
-  Future callFileUpload(
-      String channel, String text, Stream<List<int>> fileStream) async {
+  Future callFileUpload(String channel, String text, String fileName,
+      Uint8List? fileBytes) async {
     String token = await Preferences.getToken();
-    var formData = FormData.fromMap({
+    FormData formData = FormData.fromMap({
       "token": token,
       "channels": channel,
-      'file': fileStream,
-      "initial_comment": text
+      "initial_comment": text,
+      'file': MultipartFile.fromBytes(fileBytes!, filename: fileName)
     });
 
-    final response =
-        await HttpService.create().post('/files.upload', data: formData);
+    final response = await HttpService.create().post('/files.upload',
+        data: formData, options: Options(contentType: "multipart/form-data"),
+        onSendProgress: (int sent, int total) {
+    });
 
     if (response.statusCode != 200) return false;
     Slack result = Slack.fromJson(response.data);
