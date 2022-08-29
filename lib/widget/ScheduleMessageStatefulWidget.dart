@@ -116,18 +116,14 @@ class _ScheduleMessageStatefulWidgetState
                                       if (!_formKey.currentState!.validate()) {
                                         return;
                                       }
+                                      Util.showProgressDialog(context);
                                       SendMessageService()
                                           .callScheduleMessage(
                                               _channel, _reservationTime, _msg)
                                           .then((value) {
                                         if (value) _controller.text = "";
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                                content: Text(
-                                                    value ? "저장 성공" : "저장실패"),
-                                                backgroundColor: value
-                                                    ? Colors.blueAccent
-                                                    : Colors.redAccent));
+                                        showSendMessageResultSnackBar(
+                                            context, value);
                                       });
                                     },
                                     label: const Text('SEND MESSAGE')))
@@ -267,5 +263,12 @@ class _ScheduleMessageStatefulWidgetState
   Color _isSelectedButtonTextColor(bool selected) {
     if (selected) return Colors.white;
     return const Color.fromRGBO(150, 150, 150, 1);
+  }
+
+  void showSendMessageResultSnackBar(BuildContext context, value) {
+    Util.dismissProgressDialog(context);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(value ? "저장 성공" : "저장실패"),
+        backgroundColor: value ? Colors.blueAccent : Colors.redAccent));
   }
 }
