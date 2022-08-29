@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:slack_bundle/service/ConversationService.dart';
@@ -18,7 +20,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
   late TextEditingController _controller;
   var _msg = "";
   String _fileName = "";
-  Stream<List<int>>? _fileStream;
+  Uint8List? _fileBytes;
   String _channel = "";
   List<DropdownMenuItem<String>> _dropdownItems = [];
   bool _isPublic = true;
@@ -105,7 +107,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                             setState(() {
                               PlatformFile file = result.files.first;
                               _fileName = file.name;
-                              _fileStream = file.readStream!;
+                              _fileBytes = file.bytes;
                             });
                           },
                           child: const Text("첨부 파일"))
@@ -117,7 +119,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                         child: ElevatedButton.icon(
                             icon: const Icon(Icons.send_sharp, size: 18),
                             onPressed: () {
-                              if (_fileStream == null) {
+                              if (_fileBytes == null) {
                                 if (!_formKey.currentState!.validate()) return;
                                 SendMessageService()
                                     .callPostMessage(_channel, _msg)
@@ -128,12 +130,13 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                                 return;
                               }
                               SendMessageService()
-                                  .callFileUpload(_channel, _msg, _fileStream!)
+                                  .callFileUpload(
+                                      _channel, _msg, _fileName, _fileBytes)
                                   .then((value) {
                                 if (value) {
                                   _controller.text = "";
                                   setState(() {
-                                    _fileStream = null;
+                                    _fileBytes = null;
                                     _fileName = "";
                                   });
                                 }
