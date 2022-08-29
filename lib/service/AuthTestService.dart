@@ -1,11 +1,10 @@
-import 'package:dio/dio.dart';
-import 'package:slack_bundle/model/AuthTest.dart';
+import '../model/AuthTest.dart';
+import '../util/HttpService.dart';
 
 class AuthTestService {
   Future<AuthTest> authTest(String token) async {
-    var response = await Dio().post('https://slack.com/api/auth.test',
-        options: Options(headers: {"authorization": "Bearer $token"}));
-
+    var response =
+        await HttpService.create().post('/auth.test', data: {"token": token});
     if (response.statusCode != 200) return AuthTest(ok: false);
     return AuthTest.fromJson(response.data);
   }
