@@ -7,9 +7,11 @@ class ConversationService {
     String token = await Preferences.getToken();
     final response = await HttpService.create()
         .post('/conversations.list?types=$types', data: {'token': token});
+
     if (response.statusCode != 200) return [];
     Conversations conversations = Conversations.fromJson(response.data);
-    return conversations.channels
+    if (conversations.error == null) return [];
+    return conversations.channels!
         .where((channel) => channel.isMember == true)
         .toList();
   }
