@@ -22,4 +22,27 @@ class Util {
       },
     );
   }
+
+  static void showProgressDialog(BuildContext context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return Dialog(
+              backgroundColor: Colors.white,
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 15),
+                        Text('Loading...')
+                      ])));
+        });
+  }
+
+  static void dismissProgressDialog(BuildContext context) {
+    Navigator.pop(context);
+  }
 }

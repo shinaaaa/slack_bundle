@@ -3,6 +3,7 @@ import 'package:slack_bundle/model/AuthTest.dart';
 import 'package:slack_bundle/service/AuthTestService.dart';
 
 import '../util/Preferences.dart';
+import '../util/Util.dart';
 
 class SettingStatefulWidget extends StatefulWidget {
   const SettingStatefulWidget({Key? key}) : super(key: key);
@@ -68,7 +69,9 @@ class _SettingStatefulWidgetState extends State<SettingStatefulWidget> {
         ElevatedButton.icon(
             onPressed: () {
               if (!_formKey.currentState!.validate()) return;
+              Util.showProgressDialog(context);
               AuthTestService().authTest(_token).then((value) {
+                Util.dismissProgressDialog(context);
                 setState(() {
                   _onClick = true;
                   _auth = value;

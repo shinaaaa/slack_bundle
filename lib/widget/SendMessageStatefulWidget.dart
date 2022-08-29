@@ -6,6 +6,7 @@ import 'package:slack_bundle/service/ConversationService.dart';
 
 import '../model/Conversations.dart';
 import '../service/SendMessageService.dart';
+import '../util/Util.dart';
 
 class SendMessageStatefulWidget extends StatefulWidget {
   const SendMessageStatefulWidget({Key? key}) : super(key: key);
@@ -101,8 +102,14 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                               backgroundColor: MaterialStateProperty.all<Color>(
                                   const Color.fromRGBO(150, 150, 150, 1))),
                           onPressed: () async {
-                            FilePickerResult? result =
-                                await FilePicker.platform.pickFiles();
+                            FilePickerResult? result = await FilePicker.platform
+                                .pickFiles(onFileLoading: (status) {
+                              if (status == FilePickerStatus.picking) {
+                                Util.showProgressDialog(context);
+                              } else {
+                                Util.dismissProgressDialog(context);
+                              }
+                            });
                             if (result == null) return;
                             setState(() {
                               PlatformFile file = result.files.first;
@@ -119,6 +126,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                         child: ElevatedButton.icon(
                             icon: const Icon(Icons.send_sharp, size: 18),
                             onPressed: () {
+                              Util.showProgressDialog(context);
                               if (_fileBytes == null) {
                                 if (!_formKey.currentState!.validate()) return;
                                 SendMessageService()
@@ -251,6 +259,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
   }
 
   void showSendMessageResultSnackBar(BuildContext context, value) {
+    Util.dismissProgressDialog(context);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(value ? "전송 성공" : "전송 실패"),
         backgroundColor: value ? Colors.blueAccent : Colors.redAccent));

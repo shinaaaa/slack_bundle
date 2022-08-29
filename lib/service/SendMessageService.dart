@@ -30,9 +30,9 @@ class SendMessageService {
     });
 
     final response = await HttpService.create().post('/files.upload',
-        data: formData, options: Options(contentType: "multipart/form-data"),
-        onSendProgress: (int sent, int total) {
-    });
+        data: formData,
+        options: Options(contentType: "multipart/form-data"),
+        onSendProgress: (int sent, int total) {});
 
     if (response.statusCode != 200) return false;
     Slack result = Slack.fromJson(response.data);

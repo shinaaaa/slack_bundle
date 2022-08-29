@@ -5,6 +5,7 @@ import 'package:slack_bundle/model/ScheduledMessage.dart';
 import '../model/Conversations.dart';
 import '../service/ConversationService.dart';
 import '../service/SendMessageService.dart';
+import '../util/Util.dart';
 
 class ScheduleMessageListStatefulWidget extends StatefulWidget {
   const ScheduleMessageListStatefulWidget({Key? key}) : super(key: key);
@@ -132,14 +133,12 @@ class _ScheduleMessageListStatefulWidgetState
               TextButton(
                 onPressed: () {
                   Navigator.pop(context, "Ok");
+                  Util.showProgressDialog(ctx);
                   SendMessageService()
                       .callDeleteScheduledMessagesList(
                           _messages[index].channelId, _messages[index].id)
                       .then((value) {
-                    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-                        content: Text(value ? "삭제성공" : "삭제실패"),
-                        backgroundColor:
-                            value ? Colors.blueAccent : Colors.redAccent));
+                    showSendMessageResultSnackBar(ctx, value);
                     if (!value) return;
                     setState(() {
                       _messages.removeAt(index);
@@ -235,6 +234,13 @@ class _ScheduleMessageListStatefulWidgetState
   String convertTime(int msTime) {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(msTime * 1000);
     return DateFormat.yMd('ko_KR').add_Hm().format(dateTime);
+  }
+
+  void showSendMessageResultSnackBar(BuildContext context, value) {
+    Util.dismissProgressDialog(context);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(value ? "삭제성공" : "삭제실패"),
+        backgroundColor: value ? Colors.blueAccent : Colors.redAccent));
   }
 }
 
