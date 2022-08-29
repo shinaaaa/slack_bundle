@@ -10,8 +10,9 @@ class ConversationService {
 
     if (response.statusCode != 200) return [];
     Conversations conversations = Conversations.fromJson(response.data);
-    if (conversations.error == null) return [];
-    return conversations.channels!
+    if (conversations.error.isNotEmpty) return [];
+    if (conversations.channels.isEmpty) return [];
+    return conversations.channels
         .where((channel) => channel.isMember == true)
         .toList();
   }

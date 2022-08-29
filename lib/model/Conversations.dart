@@ -1,18 +1,23 @@
 class Conversations {
   bool ok;
-  String? error;
-  List<Channels>? channels;
+  String error;
+  List<Channels> channels;
 
-  Conversations({required this.ok, this.error, this.channels});
+  Conversations(
+      {required this.ok, required this.error, required this.channels});
 
   factory Conversations.fromJson(Map<String, dynamic> parsedJson) {
     List<Channels> channels = [];
 
-    var list = parsedJson['channels'];
-    if (list != null) channels = list.map((i) => Channels.fromJson(i)).toList();
+    List list = parsedJson['channels'] ?? [];
+    if (list.isNotEmpty) {
+      channels = list.map((i) => Channels.fromJson(i)).toList();
+    }
 
     return Conversations(
-        ok: parsedJson['ok'], error: parsedJson['error'], channels: channels);
+        ok: parsedJson['ok'],
+        error: parsedJson['error'] ?? "",
+        channels: channels);
   }
 }
 
