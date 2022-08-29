@@ -107,7 +107,7 @@ class _SendMessageStatefulWidgetState extends State<SendMessageStatefulWidget> {
                               if (status == FilePickerStatus.picking) {
                                 Util.showProgressDialog(context);
                               } else {
-                                Navigator.pop(context);
+                                Util.dismissProgressDialog(context);
                               }
                             });
                             if (result == null) return;
